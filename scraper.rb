@@ -18,7 +18,7 @@ end
 def crawl(url)
   doc = Nokogiri::HTML(get_body(url))
 
-  return if doc.css('.minificha').empty?
+  return if doc.css('.minificha').length < 20
 
   doc.css('.minificha').each do |ap|
     price = parse(ap.css('[itemprop=price]').attr('content').text)
