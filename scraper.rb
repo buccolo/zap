@@ -6,7 +6,6 @@ require 'nokogiri'
 require 'scraperwiki'
 require 'httparty'
 
-LIMIT_DATE = Date.today - 1.days
 BASE_URL = 'https://www.zapimoveis.com.br/aluguel/apartamentos/sp+sao-paulo+zona-sul+%s/?tipobusca=rapida&rangeValor=0-%s&foto=1&ord=dataatualizacao'.freeze
 
 def get_body(url)
@@ -26,13 +25,27 @@ def crawl(url, neighborhood, price_limit)
   doc = Nokogiri::HTML(get_body(url), nil, 'ISO-8859-1')
 
   doc.css('.minificha').each do |ap|
+    rent = parse(ap.css('[itemprop=price]').attr('content').text)
+    cond = parse(ap.css('.preco span').text)
+    total_price = cond + rent
+
     data = {
       uuid: ap.attr('itemid'),
-      price: ap.css('[itemprop=price]').attr('content').text.gsub(/[R\$\ \.]/, '').to_i
+      total_price: total_price,
+      address: ap.css('[itemprop=streetAddress]').text,
+      quartos: parse(ap.css('[class=icone-quartos]').text),
+      vagas: parse(ap.css('[class=icone-vagas]').text),
+      area: parse(ap.css('[class=icone-area]').text.split("m2").last),
+      url: url
     }
 
+    puts data
     ScraperWiki::save_sqlite([:uuid], data)
   end
+end
+
+def parse(text)
+  text.split(': ').last.to_s.gsub(/[R\$\ \.]/, '').to_i
 end
 
 bairros = [
