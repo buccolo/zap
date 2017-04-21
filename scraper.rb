@@ -22,7 +22,7 @@ def get_neighborhood_url(name, price)
 end
 
 def crawl(url, neighborhood, price_limit)
-  doc = Nokogiri::HTML(get_body(url), nil, 'ISO-8859-1')
+  doc = Nokogiri::HTML(get_body(url))
 
   doc.css('.minificha').each do |ap|
     rent = parse(ap.css('[itemprop=price]').attr('content').text)
