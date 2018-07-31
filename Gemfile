@@ -4,11 +4,11 @@
 
 source 'https://rubygems.org'
 
-ruby '2.4.0'
+ruby '2.5.0'
 
 gem 'scraperwiki', git: 'https://github.com/openaustralia/scraperwiki-ruby.git', branch: 'morph_defaults'
 gem 'mechanize'
-gem 'nokogiri', '1.6.8.1'
+gem 'nokogiri', '~> 1.8.2'
 gem 'activesupport'
 gem 'httparty'
 gem 'pry', group: :development
